@@ -37,15 +37,16 @@ class HttpProxyMiddleware (object):
         request.meta['proxy'] = proxy
             
     def process_response(self, request, response, spider):
-        #log.msg('response downloaded by using proxy %s' % response.request.meta['proxy'], level=log.DEBUG)
         if hasattr(spider, 'ban_codes'):
             if response.status in spider.ban_codes:
                 self.redis_cli.srem('proxies_%s' % spider.name, request.meta['proxy'])
+                self.rings[spider_name].remove(request.meta['proxy'])
         return response
         
     def process_exception(self, request, exception, spider):
         if isinstance(exception, self.EXCEPTIONS_TO_RETRY):
             self.redis_cli.srem('proxies_%s' % spider.name, request.meta['proxy'])
+            self.rings[spider_name].remove(request.meta['proxy'])
             log.msg('removed proxy %s' % request.meta['proxy'], level = log.DEBUG)
         
 class Ring(object):
@@ -53,19 +54,25 @@ class Ring(object):
     def __init__(self, _list):
         self.nodes = [Node(data) for data in _list]
         length = len(self.nodes)
-        
         for i in range(length):
             if i < length - 1 :
                 self.nodes[i].link(self.nodes[i+1])
             else:
                 self.nodes[i].link(self.nodes[0])
                 
-        self.current = self.nodes[0]    
-       
+        self.current = self.nodes[-1]    
+    
+    def remove(self, proxy):
+        nodes = filter(lambda n: n.data == proxy, self.nodes)
+        length = len(self.nodes)
+        for node in nodes:
+            index = self.nodes.index(node) 
+            self.nodes[index - 1].link(self.nodes[-(length - index) + 1])
+            self.nodes.remove(node)
+      
     def next(self):
-        data = self.current.data
         self.current = self.current.next
-        return data
+        return self.current.data
         
 class Node(object):
 

@@ -19,9 +19,9 @@ http://img.jyeoo.net/quiz/images/201201/51/b7fce581.png
 '期末' : u'\u671f\u672b',
 '月考' : u'\u6708\u8003'}
 
-选择题
-填空题
-解答题
+'选择题':u'\u9009\u62e9\u9898'
+'填空题':u'\u586b\u7a7a\u9898'
+'解答题':u'\u89e3\u7b54\u9898'
 
 
 
@@ -32,3 +32,6 @@ http://img.jyeoo.net/quiz/images/201201/51/b7fce581.png
 英语
 
 几年级（上）
+
+
+

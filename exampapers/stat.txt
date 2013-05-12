@@ -23,6 +23,9 @@ http://img.jyeoo.net/quiz/images/201201/51/b7fce581.png
 '填空题':u'\u586b\u7a7a\u9898'
 '解答题':u'\u89e3\u7b54\u9898'
 
+'wl','hx','sx','yw','ls','sw','dl','zz','yy'
+
+['http://gzwl.cooco.net.cn/', 'http://gzhx.cooco.net.cn/', 'http://gzsx.cooco.net.cn/', 'http://gzyw.cooco.net.cn/', 'http://gzls.cooco.net.cn/', 'http://gzsw.cooco.net.cn/', 'http://gzdl.cooco.net.cn/', 'http://gzzz.cooco.net.cn/', 'http://gzyy.cooco.net.cn/', 'http://czwl.cooco.net.cn/', 'http://czhx.cooco.net.cn/', 'http://czsx.cooco.net.cn/', 'http://czyw.cooco.net.cn/', 'http://czls.cooco.net.cn/', 'http://czsw.cooco.net.cn/', 'http://czdl.cooco.net.cn/', 'http://czzz.cooco.net.cn/', 'http://czyy.cooco.net.cn/']
 
 
 语文

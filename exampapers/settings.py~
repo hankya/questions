@@ -17,10 +17,10 @@ ITEM_PIPELINES = [
 #'exampapers.pipelines.normalize.UrlRewriterPipeline',
 'exampapers.pipelines.flatten.FlattenItemPipeline',
 'exampapers.pipelines.htmltotext.HtmlToTextPipeline',
-#'exampapers.pipelines.normalize.AnswerPipeline',
+'exampapers.pipelines.normalize.AnswerPipeline',
 'exampapers.pipelines.filter.ItemFilterPipeline',
 'exampapers.pipelines.djangowriter.DjangoWriterPipeline',
-#'exampapers.pipelines.ScreenshotPipeline',
+'exampapers.pipelines.screenshot.ScreenshotPipeline',
 ]
 
 DOWNLOADER_MIDDLEWARES = {
@@ -31,7 +31,7 @@ DOWNLOADER_MIDDLEWARES = {
 #'exampapers.middlewares.FilterMiddleware':875,
 #'exampapers.middlewares._webkit.WebkitDownloader':1000,
 #'exampapers.middlewares.RelativeToAbsMiddleware':1100,
-'exampapers.middlewares.retry.RetryMiddleware':450,
+'exampapers.middlewares.retry.RetryMiddleware':550,
 'exampapers.middlewares.httpproxy.HttpProxyMiddleware':750,
 'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware':None,
 }
@@ -42,12 +42,12 @@ RETRY_PRIORITY_ADJUST = 0
 
 #IMAGES_STORE='screenshots/containers'
 
-LOG_LEVEL='ERROR'
+LOG_LEVEL='DEBUG'
 #LOG_FILE = 'errors'
 
 #DUPEFILTER_CLASS = 'exampapers.dupefilter.RedisDupeFilter'
 
-HTTPCACHE_ENABLED = True
+HTTPCACHE_ENABLED = False
 HTTPCACHE_EXPIRATION_SECS = 0
 HTTPCACHE_STORAGE = 'scrapy.contrib.downloadermiddleware.httpcache.FilesystemCacheStorage'
 HTTPCACHE_DIR = '/mnt/httpcache'

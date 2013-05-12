@@ -20,7 +20,7 @@ ITEM_PIPELINES = [
 #'exampapers.pipelines.normalize.AnswerPipeline',
 'exampapers.pipelines.filter.ItemFilterPipeline',
 'exampapers.pipelines.djangowriter.DjangoWriterPipeline',
-#'exampapers.pipelines.ScreenshotPipeline',
+'exampapers.pipelines.screenshot.ScreenshotPipeline',
 ]
 
 DOWNLOADER_MIDDLEWARES = {
@@ -31,7 +31,7 @@ DOWNLOADER_MIDDLEWARES = {
 #'exampapers.middlewares.FilterMiddleware':875,
 #'exampapers.middlewares._webkit.WebkitDownloader':1000,
 #'exampapers.middlewares.RelativeToAbsMiddleware':1100,
-'exampapers.middlewares.retry.RetryMiddleware':450,
+'exampapers.middlewares.retry.RetryMiddleware':550,
 'exampapers.middlewares.httpproxy.HttpProxyMiddleware':750,
 'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware':None,
 }
@@ -47,7 +47,7 @@ LOG_LEVEL='DEBUG'
 
 #DUPEFILTER_CLASS = 'exampapers.dupefilter.RedisDupeFilter'
 
-HTTPCACHE_ENABLED = True
+HTTPCACHE_ENABLED = False
 HTTPCACHE_EXPIRATION_SECS = 0
 HTTPCACHE_STORAGE = 'scrapy.contrib.downloadermiddleware.httpcache.FilesystemCacheStorage'
 HTTPCACHE_DIR = '/mnt/httpcache'
