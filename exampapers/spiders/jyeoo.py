@@ -7,6 +7,7 @@ from scrapy.contrib.loader import XPathItemLoader
 from scrapy.http import Request
 from scrapy import log
 import re
+import os
 
 from exampapers.questionmodels.models import QuestionItem
 from exampapers.utils import urls_from_imgs, get_path_from_url, rewrite_imgsrc, get_uuid
