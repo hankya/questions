@@ -4,7 +4,7 @@ from scrapy.selector import HtmlXPathSelector
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.contrib.loader import XPathItemLoader
-from scrapy.http import Request
+from scrapy.http import Request, HtmlResponse
 from scrapy.utils.response import get_base_url
 from scrapy import log
 
@@ -31,8 +31,6 @@ class CoocoSpider(CrawlSpider):
     ban_codes = [400, 403]
         
     def is_valid_response(self, response):
-        if response.status == 404:
-            return False
         if response.body.find('<html><body><br><br><br><script>window.location=') > -1:
             return False
         return True
@@ -44,7 +42,7 @@ class CoocoSpider(CrawlSpider):
         #capture all images
         image_urls = urls_from_imgs(base_url, hxs.select('//img/@src').extract())
         for image_url in image_urls:
-            req = Request(image_url, callback=self.parse_image)
+            req = Request(image_url, callback=self.parse_image, priority=1)
             yield req
         
         paper_name = hxs.select('//div[@class="spy"]/text()').extract()[1].strip()

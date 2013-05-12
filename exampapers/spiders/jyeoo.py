@@ -4,7 +4,7 @@ from scrapy.selector import HtmlXPathSelector
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.contrib.loader import XPathItemLoader
-from scrapy.http import Request
+from scrapy.http import Request, HtmlResponse
 from scrapy import log
 import re
 import os
@@ -30,6 +30,12 @@ class JyeooSpider(CrawlSpider):
         Rule(SgmlLinkExtractor(allow=('http://www.jyeoo.com/\w+/report/detail/[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}',)), callback='parse_items', process_request=add_meta),
         Rule(SgmlLinkExtractor(allow=('http://www.jyeoo.com/\w+/report/search.+',)),),
         )     
+     
+    def is_valid_response(self, response):
+        if type(response) is HtmlResponse:
+            if len(response.body) < 4000:
+                return False
+        return True
             
     def parse_items(self, response):
         hxs = HtmlXPathSelector(response)
@@ -73,7 +79,7 @@ class JyeooSpider(CrawlSpider):
         base_url = '/'.join(response.url.split('/')[:3])
         image_urls = urls_from_imgs(base_url, hxs.select('//img/@src').extract())
         for image_url in image_urls:
-            req = Request(image_url, callback=self.parse_image)
+            req = Request(image_url, callback=self.parse_image, priority=1)
             yield req
         #item['image_urls'] = u''    
         item['question_id'] = get_uuid()
