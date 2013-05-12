@@ -8,7 +8,7 @@ class QuestionModel(models.Model):
     
     question_id = models.CharField(max_length=50, blank=True)
     
-    #image_urls = models.TextField()
+    image_urls = models.TextField()
     
     url = models.URLField()
     question_number = models.IntegerField(blank=True)
