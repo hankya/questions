@@ -88,7 +88,7 @@ class JyeooSpider(CrawlSpider):
         item['question_answer_html'] = rewrite_imgsrc_abs(hxs.select('//fieldset/div[@class="pt6"]').extract(), response.url)
         #item['question_comment_html'] = hxs.select('//fieldset/div[@class="pt6"]').extract()
         item['question_analysis_html'] = hxs.select('//fieldset/div[@class="pt5"]/text()').extract()
-        item['knowledge_points'] = hxs.select('//fieldset/div[@class="pt3"]/a/text()').extract()  
+        item['knowledge_points'] = ','.join(hxs.select('//fieldset/div[@class="pt3"]/a/text()').extract())  
         yield item
         
 #    def parse_image(self, response):
