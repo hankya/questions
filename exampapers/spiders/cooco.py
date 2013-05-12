@@ -35,6 +35,8 @@ class CoocoSpider(CrawlSpider):
     def is_valid_response(self, response):
         if response.body.find('<html><body><br><br><br><script>window.location=') > -1:
             return False
+        if len(response.body) < 1000:
+            return False
         return True
         
     def parse_items(self, response):
@@ -48,7 +50,7 @@ class CoocoSpider(CrawlSpider):
         try:
             paper_name = hxs.select('//div[@class="spy"]/text()').extract()[1].strip()
         except:
-            log.msg(response.body, level=log.ERROR)
+            log.msg("fail to extract %s" % response.body, level=log.ERROR)
             
         questions = hxs.select('//ul[@id="test"]/li')
         for question in questions:

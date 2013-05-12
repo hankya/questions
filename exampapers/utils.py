@@ -38,8 +38,11 @@ def _rewrite_imgsrc2(value, url):
             img.set('alt', '')
         return html.tostring(hdoc, encoding='unicode')
     except XMLSyntaxError:
-        log.msg('rewrite img src failed, see %s' % value, level=log.ERROR)
-        return u''
+        log.msg('rewrite imgsrc xml syntax error, see %s' % value, level=log.ERROR)
+    except UnicodeDecodeError:
+        log.msg('rewrite imgsrc unicode decode error, see %s' % value, level=log.ERROR)
+        
+    return u''
                
 import uuid
 def get_uuid():
