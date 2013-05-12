@@ -25,6 +25,10 @@ def get_uuid():
     return uuid.uuid4().hex
     
 import urlparse    
+<<<<<<< HEAD
 def urls_from_imgs(base_url, img_srcs):
+=======
+def urls_from_imgs(img_srcs):
+>>>>>>> 92a34193e06d9a81bb2fb4f76515901fa8d3a7c1
     return [urlparse.urljoin(base_url, url) for url in set(img_srcs)]
     
