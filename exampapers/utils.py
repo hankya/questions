@@ -31,7 +31,7 @@ def _rewrite_imgsrc2(value, url):
         hdoc = html.fromstring(value)
         imgs = hdoc.xpath('//img')
         for img in imgs:
-            img_link = img.get('src')
+            img_link = img.get('src').strip()
             base_url = '/'.join(url.split('/')[:3])
             abs_link = urlparse.urljoin(base_url, img_link)
             img.set('src', abs_link)
