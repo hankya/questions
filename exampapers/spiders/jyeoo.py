@@ -53,7 +53,8 @@ class JyeooSpider(CrawlSpider):
                             question_counter = question_counter + 1
                             item = QuestionItem()
                             item['paper_name'] = paper_name
-                            item['difficult_level'] = field.select('following-sibling::span[1]/em/text()').extract()
+                            difficult_level_signs = field.select('following-sibling::span[1]/em/text()').extract()
+                            item['difficult_level'] = difficult_level_signs[0].count(u'\u2605') if difficult_level_signs else 0
                             item['question_type'] = question_type
                             item['question_number'] = question_counter
                             item['question_content_html'] = field.extract()
@@ -68,7 +69,8 @@ class JyeooSpider(CrawlSpider):
         hxs= HtmlXPathSelector(response)
         item = response.request.meta['item']
         #here need to create requests from img sources
-        image_urls = urls_from_imgs(hxs.select('//img/@src').extract())
+        base_url = '/'.join(response.url.split('/')[:3])
+        image_urls = urls_from_imgs(base_url, hxs.select('//img/@src').extract())
         for image_url in image_urls:
             req = Request(image_url, callback=self.parse_image)
             yield req
