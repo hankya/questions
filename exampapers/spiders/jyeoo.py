@@ -18,7 +18,7 @@ def add_meta(request):
 class JyeooSpider(CrawlSpider):
     name = 'jyeoo'
     allowed_domains = ['www.jyeoo.com','img.jyeoo.net']
-    start_urls = ['http://www.jyeoo.com/chemistry',] 
+    start_urls = ['http://www.jyeoo.com/chemistry', 'http://www.jyeoo.com/bio', 'http://www.jyeoo.com/math', 'http://www.jyeoo.com/math2', 'http://www.jyeoo.com/math3', 'http://www.jyeoo.com/physics'] 
     
     ban_codes = [403, 500, 503]
     captcha_symptom = 'x'

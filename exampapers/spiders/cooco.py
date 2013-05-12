@@ -21,7 +21,7 @@ def add_meta(request):
 class CoocoSpider(CrawlSpider):
     name = 'cooco'
     allowed_domains = ['cooco.net.cn']
-    start_urls = ['http://gzsx.cooco.net.cn/','http://gzwl.cooco.net.cn/','http://gzhx.cooco.net.cn/','http://czsx.cooco.net.cn/','http://czhx.cooco.net.cn/','http://czwl.cooco.net.cn/']         
+    start_urls = ['http://gzwl.cooco.net.cn/', 'http://gzhx.cooco.net.cn/', 'http://gzsx.cooco.net.cn/', 'http://gzyw.cooco.net.cn/', 'http://gzls.cooco.net.cn/', 'http://gzsw.cooco.net.cn/', 'http://gzdl.cooco.net.cn/', 'http://gzzz.cooco.net.cn/', 'http://gzyy.cooco.net.cn/', 'http://czwl.cooco.net.cn/', 'http://czhx.cooco.net.cn/', 'http://czsx.cooco.net.cn/', 'http://czyw.cooco.net.cn/', 'http://czls.cooco.net.cn/', 'http://czsw.cooco.net.cn/', 'http://czdl.cooco.net.cn/', 'http://czzz.cooco.net.cn/', 'http://czyy.cooco.net.cn/']        
     
     rules = (
         Rule(SgmlLinkExtractor(allow=('http://\w+.cooco.net.cn/user/newdown/\d+/?$', 'http://\w+.cooco.net.cn/shijuan/\d+/?$', ),),),
