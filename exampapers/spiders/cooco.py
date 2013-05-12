@@ -1,7 +1,7 @@
 '''this file defines the spider for jyeoo.com'''
 from scrapy.contrib.loader.processor import Compose, TakeFirst
 from scrapy.selector import HtmlXPathSelector
-from scrapy.contrib.spiders import CrawlSpider, Rule
+from scrapy.contrib.spiders import Rule
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.contrib.loader import XPathItemLoader
 from scrapy.http import Request, HtmlResponse
@@ -13,12 +13,13 @@ import os
 import urlparse
 from exampapers.utils import enqueue_imgs, get_path_from_url, rewrite_imgsrc_abs, get_uuid
 from exampapers.questionmodels.models import QuestionItem
+from exampapers.spiders.fspider import FSpider
 
 def add_meta(request):
     request.meta['skip'] = True
     return request
 
-class CoocoSpider(CrawlSpider):
+class CoocoSpider(FSpider):
     name = 'cooco'
     allowed_domains = ['cooco.net.cn']
     start_urls = ['http://gzwl.cooco.net.cn/', 'http://gzhx.cooco.net.cn/', 'http://gzsx.cooco.net.cn/', 'http://gzyw.cooco.net.cn/', 'http://gzls.cooco.net.cn/', 'http://gzsw.cooco.net.cn/', 'http://gzdl.cooco.net.cn/', 'http://gzzz.cooco.net.cn/', 'http://gzyy.cooco.net.cn/', 'http://czwl.cooco.net.cn/', 'http://czhx.cooco.net.cn/', 'http://czsx.cooco.net.cn/', 'http://czyw.cooco.net.cn/', 'http://czls.cooco.net.cn/', 'http://czsw.cooco.net.cn/', 'http://czdl.cooco.net.cn/', 'http://czzz.cooco.net.cn/', 'http://czyy.cooco.net.cn/']         
@@ -32,8 +33,6 @@ class CoocoSpider(CrawlSpider):
         
     def is_valid_response(self, response):
         if response.body.find('<html><body><br><br><br><script>window.location=') > -1:
-            return False
-        if len(response.body) < 1000:
             return False
         return True
         
