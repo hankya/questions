@@ -8,9 +8,10 @@ from scrapy.http import Request, HtmlResponse
 from scrapy import log
 import re
 import os
+from redis import StrictRedis
 
 from exampapers.questionmodels.models import QuestionItem
-from exampapers.utils import urls_from_imgs, get_path_from_url, rewrite_imgsrc, get_uuid
+from exampapers.utils import enqueue_imgs, get_path_from_url, rewrite_imgsrc_abs, get_uuid
 
 def add_meta(request):
     request.meta['skip'] = True
@@ -30,7 +31,8 @@ class JyeooSpider(CrawlSpider):
         Rule(SgmlLinkExtractor(allow=('http://www.jyeoo.com/\w+/report/detail/[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}',)), callback='parse_items', process_request=add_meta),
         Rule(SgmlLinkExtractor(allow=('http://www.jyeoo.com/\w+/report/search.+',)),),
         )     
-     
+    redis_cli = StrictRedis(host='localhost', port=6379, db=0)
+    
     def is_valid_response(self, response):
         if type(response) is HtmlResponse:
             if len(response.body) < 4000:
@@ -64,7 +66,7 @@ class JyeooSpider(CrawlSpider):
                             item['difficult_level'] = difficult_level_signs[0].count(u'\u2605') if difficult_level_signs else 0
                             item['question_type'] = question_type
                             item['question_number'] = question_counter
-                            item['question_content_html'] = rewrite_imgsrc(field.extract(), response.url)
+                            item['question_content_html'] = rewrite_imgsrc_abs(field.extract(), response.url)
                             item['paper_url'] = response.url
                             
                             req = Request(url, callback=self.parse_item)
@@ -77,28 +79,26 @@ class JyeooSpider(CrawlSpider):
         item = response.request.meta['item']
         #here need to create requests from img sources
         base_url = '/'.join(response.url.split('/')[:3])
-        image_urls = urls_from_imgs(base_url, hxs.select('//img/@src').extract())
-        for image_url in image_urls:
-            req = Request(image_url, callback=self.parse_image, priority=1)
-            yield req
-        #item['image_urls'] = u''    
+        #capture all images
+        enqueue_imgs(self.name, base_url, hxs.select('//img/@src').extract())
+        
         item['question_id'] = get_uuid()
         item['url'] = response.url        
         #!--todo, if answer is not showing, grab it from content
-        item['question_answer_html'] = rewrite_imgsrc(hxs.select('//fieldset/div[@class="pt6"]').extract(), response.url)
+        item['question_answer_html'] = rewrite_imgsrc_abs(hxs.select('//fieldset/div[@class="pt6"]').extract(), response.url)
         #item['question_comment_html'] = hxs.select('//fieldset/div[@class="pt6"]').extract()
-        item['question_analysis_html'] = rewrite_imgsrc(hxs.select('//fieldset/div[@class="pt5"]/text()').extract(), response.url)
+        item['question_analysis_html'] = hxs.select('//fieldset/div[@class="pt5"]/text()').extract()
         item['knowledge_points'] = hxs.select('//fieldset/div[@class="pt3"]/a/text()').extract()  
         yield item
         
-    def parse_image(self, response):
-        filename = get_path_from_url(response.url)
-        folder = os.path.join('/mnt/images', filename[:2])
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-        filepath = os.path.join(folder, filename)
-        if not os.path.exists(filepath): 
-            with open(filepath, 'wb') as f:
-                f.write(response.body)
-                f.flush()
-        pass
+#    def parse_image(self, response):
+#        filename = get_path_from_url(response.url)
+#        folder = os.path.join('/mnt/images', filename[:2])
+#        if not os.path.exists(folder):
+#            os.makedirs(folder)
+#        filepath = os.path.join(folder, filename)
+#        if not os.path.exists(filepath): 
+#            with open(filepath, 'wb') as f:
+#                f.write(response.body)
+#                f.flush()
+#        pass

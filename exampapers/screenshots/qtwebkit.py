@@ -9,18 +9,12 @@ import os
 import cgi
 
 class Screenshot(QWebView):
-    import time
-    from PyQt4.QtCore import *
-    from PyQt4.QtGui import *
-    from PyQt4.QtWebKit import *
-    from redis import StrictRedis
-    import os
     
     def __init__(self, spider_name):
         self.app = QApplication(sys.argv)
         QWebView.__init__(self)
         self._loaded = False
-        #self.redis_cli = StrictRedis(host='localhost', port=6379, db=0)
+        self.redis_cli = StrictRedis(host='localhost', port=6379, db=0)
         self.loadFinished.connect(self._loadFinished)
         self.spider_name = spider_name
         self.replace_sign = 'replace_me'
@@ -33,22 +27,17 @@ class Screenshot(QWebView):
     def start(self):
         while True:
             req = self.redis_cli.brpop('%s_screenshot_requests' % self.spider_name, 0)
-            self.process_item(req)
-            
-    def process_item(self, item):
-        self.item = item
-        folder_path = self.generate_path(item.question_id, self.spider_name)
+            print req
+            self.process_request(req[1])      
+
+    def process_request(self, request):
+        request = eval(request)
+        question_id = request[0]
+        name = request[1]
+        data = request[2]
+        folder_path = os.path.join('/mnt/screenshots', question_id[:2], question_id)
         if not os.path.exists(folder_path):
-            print 'process item %s' % item.id
             os.makedirs(folder_path)
-            self.process_html('question_content', folder_path)
-            self.process_html('question_answer', folder_path)
-            #self.process_html('question_analysis', folder_path)
-        else:
-            print 'skip item %s' % item.id
-                
-    def process_html(self, name, folder_path):
-        data = getattr(self.item, '%s_html' % name)
         if data:
             out_file = os.path.join(folder_path, '%s.png' % name)
             if not os.path.exists(out_file):
@@ -58,7 +47,7 @@ class Screenshot(QWebView):
                     f.write(html.encode('utf8'))
                     f.flush()
                 self.capture('file://%s' % os.path.abspath(html_file), out_file)
-                os.unlink(html_file)
+                #os.unlink(html_file)
 
     def capture(self, html_file, output_file):
         self.load(QUrl(html_file))
@@ -81,7 +70,7 @@ class Screenshot(QWebView):
         painter = QPainter(image)
         frame.render(painter)
         painter.end()
-        #print 'saving', output_file
+        print 'saving', output_file
         image.save(output_file)
 
     def wait_load(self, delay=0):
@@ -94,10 +83,10 @@ class Screenshot(QWebView):
     def _loadFinished(self, result):
         self._loaded = True
         
-    def generate_path(self, question_id, name):
+    def generate_path(self, question_id):
         '''generate path for url'''
         #key = url_fingerprint(url)
-        return os.path.join('screenshots', 'store',name,question_id[:2],question_id)
+        return os.path.join('/mnt/screenshots', question_id[:2], question_id)
     
 #s.capture('http://sitescraper.net', 'website.png')
 #s.capture('http://sitescraper.net/blog', 'blog.png')
@@ -116,7 +105,7 @@ def generate_path(question_id, name):
     
 def main():
     serv = Screenshot(sys.argv[1])
-    #serv.start()
+    serv.start()
 
 if __name__=='__main__':
     main()
