@@ -8,7 +8,6 @@ from scrapy.http import Request, HtmlResponse
 from scrapy.utils.response import get_base_url
 from scrapy import log
 
-from redis import StrictRedis
 import re
 import os
 import urlparse
@@ -30,7 +29,6 @@ class CoocoSpider(CrawlSpider):
         #Rule(SgmlLinkExtractor(allow=('http://\w+.cooco.net.cn/.*\.[bmp|gif|png|jpg|jpeg]',), tags=('a', 'img'), attrs=('href', 'src'),), callback='parse_image', ),
         )     
     ban_codes = [400, 403]
-    redis_cli = StrictRedis(host='localhost', port=6379, db=0)
         
     def is_valid_response(self, response):
         if response.body.find('<html><body><br><br><br><script>window.location=') > -1:

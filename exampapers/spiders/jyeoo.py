@@ -8,7 +8,6 @@ from scrapy.http import Request, HtmlResponse
 from scrapy import log
 import re
 import os
-from redis import StrictRedis
 
 from exampapers.questionmodels.models import QuestionItem
 from exampapers.utils import enqueue_imgs, get_path_from_url, rewrite_imgsrc_abs, get_uuid
@@ -31,7 +30,6 @@ class JyeooSpider(CrawlSpider):
         Rule(SgmlLinkExtractor(allow=('http://www.jyeoo.com/\w+/report/detail/[A-Za-z0-9]{8}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{4}-[A-Za-z0-9]{12}',)), callback='parse_items', process_request=add_meta),
         Rule(SgmlLinkExtractor(allow=('http://www.jyeoo.com/\w+/report/search.+',)),),
         )     
-    redis_cli = StrictRedis(host='localhost', port=6379, db=0)
     
     def is_valid_response(self, response):
         if type(response) is HtmlResponse:

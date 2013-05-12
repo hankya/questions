@@ -26,7 +26,7 @@ class RetryMiddleware (object):
         retries = request.meta.get('retry_times', 0) + 1 
         if retries > self.max_retry_times:
             log.msg(request.url, level=log.ERROR)
-            redis_cli.sadd('%s_failures' % spider.name, request.url)
+            self.redis_cli.sadd('%s_failures' % spider.name, request.url)
         if not spider.is_valid_response(response):
             response.status = 500
                                 
