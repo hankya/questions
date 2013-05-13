@@ -31,12 +31,13 @@ DOWNLOADER_MIDDLEWARES = {
 #'exampapers.middlewares.FilterMiddleware':875,
 #'exampapers.middlewares._webkit.WebkitDownloader':1000,
 #'exampapers.middlewares.RelativeToAbsMiddleware':1100,
-'exampapers.middlewares.retry.RetryMiddleware':550,
+'exampapers.middlewares.retry.EnhancedRetryMiddleware':500,
 'exampapers.middlewares.httpproxy.HttpProxyMiddleware':750,
+'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware':None,
 'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware':None,
 }
 RETRY_ENABLED = True
-RETRY_TIMES = 25
+RETRY_TIMES = 2
 RETRY_HTTP_CODES = [400, 401, 403, 404, 408, 500, 503, 504]
 RETRY_PRIORITY_ADJUST = 0
 
@@ -47,7 +48,7 @@ LOG_LEVEL='DEBUG'
 
 #DUPEFILTER_CLASS = 'exampapers.dupefilter.RedisDupeFilter'
 
-HTTPCACHE_ENABLED = False
+HTTPCACHE_ENABLED = True
 HTTPCACHE_EXPIRATION_SECS = 0
 HTTPCACHE_STORAGE = 'scrapy.contrib.downloadermiddleware.httpcache.FilesystemCacheStorage'
 HTTPCACHE_DIR = '/mnt/httpcache'
