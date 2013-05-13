@@ -41,5 +41,6 @@ class EnhancedRetryMiddleware(RetryMiddleware):
         else:
             log.msg(format="Gave up retrying %(request)s (failed %(retries)d times): %(reason)s",
                     level=log.ERROR, spider=spider, request=request, retries=retries, reason=reason)
-            self.redis_cli.rpush('%s_failures' % spider.name, request.url)
+            self.redis_cli.rpush('%s_failures' % spider.name, 
+                    (request.url, request.headers.get('Referer') or None))
 

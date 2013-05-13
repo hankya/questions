@@ -9,7 +9,13 @@ class FSpider(CrawlSpider):
     def start_requests(self):
         failure_url = self.redis_cli.lpop('%s_failures' % self.name)
         while failure_url:
-            yield self.make_requests_from_url(failure_url)
+            failure_url = eval(failure_url)
+            req = self.make_requests_from_url(failure_url[0])
+            referer = failure_url[1]
+            if referer:
+                req.headers.setdefault('Referer', referer)
+            yield req
+            
             failure_url = self.redis_cli.lpop('%s_failures' % self.name)
             
         for url in self.start_urls:
