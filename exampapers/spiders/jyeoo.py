@@ -1,7 +1,7 @@
 '''this file defines the spider for jyeoo.com'''
 from scrapy.contrib.loader.processor import Compose, TakeFirst
 from scrapy.selector import HtmlXPathSelector
-from scrapy.contrib.spiders import CrawlSpider, Rule
+from scrapy.contrib.spiders import Rule
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.contrib.loader import XPathItemLoader
 from scrapy.http import Request, HtmlResponse
@@ -11,12 +11,13 @@ import os
 
 from exampapers.questionmodels.models import QuestionItem
 from exampapers.utils import enqueue_imgs, get_path_from_url, rewrite_imgsrc_abs, get_uuid
+from exampapers.spiders.fspider import FSpider
 
 def add_meta(request):
     request.meta['skip'] = True
     return request
 
-class JyeooSpider(CrawlSpider):
+class JyeooSpider(FSpider):
     name = 'jyeoo'
     allowed_domains = ['www.jyeoo.com','img.jyeoo.net']
     start_urls = ['http://www.jyeoo.com/chemistry', 'http://www.jyeoo.com/bio', 'http://www.jyeoo.com/math', 'http://www.jyeoo.com/math2', 'http://www.jyeoo.com/math3', 'http://www.jyeoo.com/physics'] 

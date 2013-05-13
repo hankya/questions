@@ -43,7 +43,7 @@ class CoocoSpider(FSpider):
         #capture all images
         enqueue_imgs(self.name, base_url, hxs.select('//img/@src').extract())
 
-        paper_name = ''
+        paper_name = u''
         try:
             paper_name = hxs.select('//div[@class="spy"]/text()').extract()[1].strip()
         except:
