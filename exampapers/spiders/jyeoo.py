@@ -34,6 +34,8 @@ class JyeooSpider(FSpider):
     
     def is_valid_response(self, response):
         if type(response) is HtmlResponse:
+            if not response.body.strip():
+                return False
             if len(response.body) < 4000:
                 return False
         return True

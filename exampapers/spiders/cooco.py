@@ -32,8 +32,11 @@ class CoocoSpider(FSpider):
     ban_codes = [400, 403]
         
     def is_valid_response(self, response):
-        if response.body.find('<html><body><br><br><br><script>window.location=') > -1:
-            return False
+        if type(response) is HtmlResponse:
+            if response.body.find('<html><body><br><br><br><script>window.location=') > -1:
+                return False
+            if not response.body.strip():
+                return False
         return True
         
     def parse_items(self, response):
