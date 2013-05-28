@@ -109,9 +109,9 @@ def url_fingerprint(url):
     return fp.hexdigest()
     
 def generate_path(question_id, name):
-    '''generate path for url'''
+    '''generate path for url, put all screenshots onto /mnt'''
     #key = url_fingerprint(url)
-    return os.path.join('store',name,question_id[:2],question_id)
+    return os.path.join('/mnt/screenshots', question_id[:2], question_id)
     
     
 def main():
