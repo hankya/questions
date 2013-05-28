@@ -15,7 +15,7 @@ DATABASES = {
         'NAME': 'cooco',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': 'root',
-        'PASSWORD': 'p@ssw0rd',
+        'PASSWORD': 'mnp@ssw0rd',
         'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '',                      # Set to empty string for default.
     }

@@ -36,14 +36,14 @@ DOWNLOADER_MIDDLEWARES = {
 'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware':None,
 }
 RETRY_ENABLED = True
-RETRY_TIMES = 20
+RETRY_TIMES = 50
 RETRY_HTTP_CODES = [400, 401, 403, 404, 408, 500, 503, 504]
 RETRY_PRIORITY_ADJUST = 0
 
 #IMAGES_STORE='screenshots/containers'
 
-LOG_LEVEL='DEBUG'
-#LOG_FILE = 'errors'
+LOG_LEVEL='ERROR'
+LOG_FILE = 'logs/errors'
 
 #DUPEFILTER_CLASS = 'exampapers.dupefilter.RedisDupeFilter'
 

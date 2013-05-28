@@ -54,7 +54,7 @@ class CoocoSpider(CrawlSpider):
             item['paper_name'] = paper_name.replace(' ', '')
             item['grade'] = paper_name[0:2]
             item['subject'] = paper_name[2:4]
-            item['image_urls'] = u''
+            #item['image_urls'] = u''
             item['question_id'] = get_uuid()
             item['question_number'] = 1
             item['paper_url'] = response.url
