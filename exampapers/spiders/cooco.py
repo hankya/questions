@@ -5,12 +5,13 @@ from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.contrib.loader import XPathItemLoader
 from scrapy.http import Request
+from scrapy.utils.response import get_base_url
 from scrapy import log
+
 import re
 import os
-import urlparse
-from scrapy.utils.response import get_base_url
 
+from exampapers.utils import urls_from_imgs, get_path_from_url, rewrite_imgsrc, get_uuid
 from exampapers.questionmodels.models import QuestionItem
 
 def add_meta(request):
@@ -20,7 +21,7 @@ def add_meta(request):
 class CoocoSpider(CrawlSpider):
     name = 'cooco'
     allowed_domains = ['cooco.net.cn']
-    start_urls = ['http://gzsx.cooco.net.cn/','http://gzwl.cooco.net.cn/','http://gzhx.cooco.net.cn/','http://czsx.cooco.net.cn/','http://czhx.cooco.net.cn/','http://czwl.cooco.net.cn/']         
+    start_urls = ['http://gzwl.cooco.net.cn/', 'http://gzhx.cooco.net.cn/', 'http://gzsx.cooco.net.cn/', 'http://gzyw.cooco.net.cn/', 'http://gzls.cooco.net.cn/', 'http://gzsw.cooco.net.cn/', 'http://gzdl.cooco.net.cn/', 'http://gzzz.cooco.net.cn/', 'http://gzyy.cooco.net.cn/', 'http://czwl.cooco.net.cn/', 'http://czhx.cooco.net.cn/', 'http://czsx.cooco.net.cn/', 'http://czyw.cooco.net.cn/', 'http://czls.cooco.net.cn/', 'http://czsw.cooco.net.cn/', 'http://czdl.cooco.net.cn/', 'http://czzz.cooco.net.cn/', 'http://czyy.cooco.net.cn/']        
     
     rules = (
         Rule(SgmlLinkExtractor(allow=('http://\w+.cooco.net.cn/user/newdown/\d+/?$', 'http://\w+.cooco.net.cn/shijuan/\d+/?$', ),),),
@@ -41,7 +42,7 @@ class CoocoSpider(CrawlSpider):
         base_url = '/'.join(response.url.split('/')[:3])
         
         #capture all images
-        image_urls = [urlparse.urljoin(base_url, url) for url in set(hxs.select('//img/@src').extract())]
+        image_urls = urls_from_imgs(hxs.select('//img/@src').extract())
         for image_url in image_urls:
             req = Request(image_url, callback=self.parse_image)
             yield req
@@ -100,30 +101,3 @@ class CoocoSpider(CrawlSpider):
                 f.write(response.body)
                 f.flush()
         pass
-
-import hashlib
-
-def get_path_from_url(url):
-    tokens = url.split('/')
-    return '%s.%s' % (hashlib.sha1(url).hexdigest(), tokens[-1].split('.')[-1])
-        
-from lxml import html
-
-def rewrite_imgsrc(value, url):
-    return [_rewrite_imgsrc(v, url) for v in value] if hasattr(value, '__iter__') else _rewrite_imgsrc(value, url)    
-    
-def _rewrite_imgsrc(value, url):
-    hdoc = html.fromstring(value)
-    imgs = hdoc.xpath('//img')
-    for img in imgs:
-        img_link = img.get('src')
-        base_url = '/'.join(url.split('/')[:3])
-        abs_link = urlparse.urljoin(base_url, img_link)
-        filename = get_path_from_url(abs_link)
-        img.set('src', '/'.join(['/mnt/images', filename[:2], filename]))
-    return html.tostring(hdoc, encoding='unicode')
-        
-import uuid
-def get_uuid():
-    return uuid.uuid4().hex
-    
