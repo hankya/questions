@@ -7,6 +7,7 @@ from scrapy.contrib.loader import XPathItemLoader
 from scrapy.http import Request
 from scrapy import log
 import re
+import os
 
 from exampapers.questionmodels.models import QuestionItem
 from exampapers.utils import urls_from_imgs, get_path_from_url, rewrite_imgsrc, get_uuid
@@ -57,7 +58,7 @@ class JyeooSpider(CrawlSpider):
                             item['difficult_level'] = difficult_level_signs[0].count(u'\u2605') if difficult_level_signs else 0
                             item['question_type'] = question_type
                             item['question_number'] = question_counter
-                            item['question_content_html'] = field.extract()
+                            item['question_content_html'] = rewrite_imgsrc(field.extract(), response.url)
                             item['paper_url'] = response.url
                             
                             req = Request(url, callback=self.parse_item)
@@ -78,9 +79,9 @@ class JyeooSpider(CrawlSpider):
         item['question_id'] = get_uuid()
         item['url'] = response.url        
         #!--todo, if answer is not showing, grab it from content
-        item['question_answer_html'] = hxs.select('//fieldset/div[@class="pt6"]').extract()
+        item['question_answer_html'] = rewrite_imgsrc(hxs.select('//fieldset/div[@class="pt6"]').extract(), response.url)
         #item['question_comment_html'] = hxs.select('//fieldset/div[@class="pt6"]').extract()
-        item['question_analysis_html'] = hxs.select('//fieldset/div[@class="pt5"]/text()').extract()
+        item['question_analysis_html'] = rewrite_imgsrc(hxs.select('//fieldset/div[@class="pt5"]/text()').extract(), response.url)
         item['knowledge_points'] = hxs.select('//fieldset/div[@class="pt3"]/a/text()').extract()  
         yield item
         

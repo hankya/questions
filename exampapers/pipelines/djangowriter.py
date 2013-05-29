@@ -39,7 +39,7 @@ def paper_source_classifier(paper_name):
     return u''
     
 #pattern to match region, \u7701 = ﻿省, \u5e02=市, u'\u5e74'=年, u'\u5ea6'=度,
-REGION_PATTERN = [re.compile(u'\u5e74([^\u5e74].+\u7701)'), re.compile(u'\u5e74\u5ea6([^\u5ea6].+\u7701)'), re.compile(u'\u5e74([^\u5e74].+\u5e02)'), re.compile(u'\u5e74\u5ea6([^\u5ea6].+\u5e02)')]
+REGION_PATTERN = [re.compile(u'\u5e74\u5ea6([^\u5ea6].+\u7701)'), re.compile(u'\u5e74\u5ea6([^\u5ea6].+\u5e02)'), re.compile(u'\u5e74([^\u5e74].+\u7701)'),  re.compile(u'\u5e74([^\u5e74].+\u5e02)')]
 
 def paper_region_classifier(paper_name):
     if paper_name.find(u'\u5168\u56fd') > -1:

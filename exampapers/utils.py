@@ -18,6 +18,7 @@ def _rewrite_imgsrc(value, url):
         abs_link = urlparse.urljoin(base_url, img_link)
         filename = get_path_from_url(abs_link)
         img.set('src', '/'.join(['/mnt/images', filename[:2], filename]))
+        img.set('alt', '')
     return html.tostring(hdoc, encoding='unicode')
         
 import uuid
