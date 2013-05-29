@@ -10,7 +10,7 @@ from scrapy import log
 
 import re
 import os
-
+import urlparse
 from exampapers.utils import urls_from_imgs, get_path_from_url, rewrite_imgsrc, get_uuid
 from exampapers.questionmodels.models import QuestionItem
 
