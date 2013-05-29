@@ -11,9 +11,16 @@ class RetryMiddleware (object):
         return cls(crawler.settings)
         
     def process_response(self, request, response, spider):
+        """
+            this middleware will log failure in download, and it retry the request if the content of the
+            respons is not valid by setting its status code to 500, its next slibing middleware will retry 
+            it when it see the status code 500
+        """
+        
         retries = request.meta.get('retry_times', 0) + 1 
         if retries > self.max_retry_times:
-            log.msg(format="Gave up retrying %(request)s (failed %(retries)d times): %(reason)s",
-                    level=log.ERROR, spider=spider, request=request, retries=retries, reason=reason)
-                    
+            log.msg(format="Gave up retrying %s" % request.url, level=log.ERROR)
+        if not spider.is_valid_response(response):
+            response.status = 500
+                                
         return response
