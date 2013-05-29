@@ -74,7 +74,7 @@ class JyeooSpider(CrawlSpider):
         for image_url in image_urls:
             req = Request(image_url, callback=self.parse_image)
             yield req
-            
+        item['image_urls'] = u''    
         item['question_id'] = get_uuid()
         item['url'] = response.url        
         #!--todo, if answer is not showing, grab it from content
