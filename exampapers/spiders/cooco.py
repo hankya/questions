@@ -42,7 +42,7 @@ class CoocoSpider(CrawlSpider):
         base_url = '/'.join(response.url.split('/')[:3])
         
         #capture all images
-        image_urls = urls_from_imgs(hxs.select('//img/@src').extract())
+        image_urls = urls_from_imgs(base_url, hxs.select('//img/@src').extract())
         for image_url in image_urls:
             req = Request(image_url, callback=self.parse_image)
             yield req
