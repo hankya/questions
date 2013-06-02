@@ -11,7 +11,8 @@ from scrapy import log
 import re
 import os
 import urlparse
-from exampapers.utils import enqueue_imgs, get_path_from_url, rewrite_imgsrc_abs, get_uuid
+from exampapers.utils import enqueue_imgs, get_path_from_url, rewrite_imgsrc_abs
+from exampapers.classifier import extract_answer_info
 from exampapers.questionmodels.models import QuestionItem
 from exampapers.spiders.fspider import FSpider
 
@@ -37,6 +38,9 @@ class CoocoSpider(FSpider):
                 return False
             if not response.body.strip():
                 return False
+            if response.url.find('answerdetail') > -1:
+                if response.body.find('<html xmlns') > -1:
+                    return False
         return True
         
     def parse_items(self, response):
@@ -59,7 +63,7 @@ class CoocoSpider(FSpider):
             item['grade'] = paper_name[0:2]
             item['subject'] = paper_name[2:4]
             #item['image_urls'] = u''
-            item['question_id'] = get_uuid()
+            #item['question_id'] = get_uuid()
             item['question_number'] = 1
             item['paper_url'] = response.url
             item['url'] = response.url
@@ -81,7 +85,7 @@ class CoocoSpider(FSpider):
             else:
                 yield item
     
-    no_answer = u'<p>1\u3001\u6240\u6709\u8bd5\u9898\u90fd\u6709\u7b54\u6848\uff0c\u8bf7\u653e\u5fc3\u7ec4\u5377</p>'
+    no_answer = u'1\u3001\u6240\u6709\u8bd5\u9898\u90fd\u6709\u7b54\u6848\uff0c\u8bf7\u653e\u5fc3\u7ec4\u5377'
                                   
     def parse_item(self, response):
         #log.msg('parsing new item %s' % response.url, level=log.ERROR)
@@ -90,24 +94,11 @@ class CoocoSpider(FSpider):
         item = response.request.meta['item']
         body = response.body_as_unicode()
         if body.find(self.no_answer) > -1:
-            item['question_answer_html'] = rewrite_imgsrc_abs(response.body_as_unicode(), response.url)
-        else:
             item['question_answer_html'] = u''
-        item['question_analysis_html'] = u'',
-        #img_urls = set(hxs.select('//img/@src').extract())
-        #for img_url in img_urls:
-            #item['image_urls'].append(urlparse.urljoin(get_base_url(response), img_url))
+        else:
+            item['question_answer_html'] = ''.join(rewrite_imgsrc_abs(response.body_as_unicode(), response.url))            
+        item['question_type'], item['is_answer_unique'], item['question_answer'], item['unique_answer'] = \
+            extract_answer_info(item['question_type'], item['question_answer_html'], \
+            [u'<p>1\u3001<span>(\w)</span>',])
+        item['question_analysis_html'] = u''
         return item
-
-#    def parse_image(self, response):
-#        filename = get_path_from_url(response.url)
-#        #specify the folder path
-#        folder = os.path.join('/mnt/images', filename[:2])
-#        if not os.path.exists(folder):
-#            os.makedirs(folder)
-#        filepath = os.path.join(folder, filename)
-#        if not os.path.exists(filepath): 
-#            with open(filepath, 'wb') as f:
-#                f.write(response.body)
-#                f.flush()
-#        pass

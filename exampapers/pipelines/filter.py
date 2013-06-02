@@ -14,6 +14,7 @@ class ItemFilterPipeline(object):
         """
         
         fingerprint = sha1(item['question_content_html'].encode('utf8')).hexdigest()
+        item['question_id'] = fingerprint
         result = self.redis_cli.sadd('items', fingerprint)
         if result:
             return item

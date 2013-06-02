@@ -8,9 +8,11 @@ from scrapy.http import Request, HtmlResponse
 from scrapy import log
 import re
 import os
+from lxml import html
 
 from exampapers.questionmodels.models import QuestionItem
-from exampapers.utils import enqueue_imgs, get_path_from_url, rewrite_imgsrc_abs, get_uuid
+from exampapers.utils import enqueue_imgs, get_path_from_url, rewrite_imgsrc_abs
+from exampapers.classifier import extract_answer_info_text, extract_answer_info
 from exampapers.spiders.fspider import FSpider
 
 def add_meta(request):
@@ -82,16 +84,30 @@ class JyeooSpider(FSpider):
         base_url = '/'.join(response.url.split('/')[:3])
         #capture all images
         enqueue_imgs(self.name, base_url, hxs.select('//img/@src').extract())
-        
-        item['question_id'] = get_uuid()
         item['url'] = response.url        
         #!--todo, if answer is not showing, grab it from content
-        item['question_answer_html'] = rewrite_imgsrc_abs(hxs.select('//fieldset/div[@class="pt6"]').extract(), response.url)
+        item['question_answer_html'] = ''.join(rewrite_imgsrc_abs(hxs.select('//fieldset/div[@class="pt6"]').extract(), response.url))
+        if item['question_answer_html'].find(u'\u67e5\u770b\u672c\u9898\u89e3\u6790\u9700\u8981') > -1:
+            item['question_answer'] = process_answer(item['question_answer_html'], item['question_content_html'])
+            item['question_answer_html'] = u''
+            item['question_type'], item['is_answer_unique'], item['unique_answer'] = \
+                extract_answer_info_text(item['question_type'], item['question_answer'])
+        else:
+            item['question_type'], item['is_answer_unique'], item['question_answer'], item['unique_answer'] \
+                = extract_answer_info(item['question_type'], item['question_answer_html'], \
+                [u'.*',])
         #item['question_comment_html'] = hxs.select('//fieldset/div[@class="pt6"]').extract()
         item['question_analysis_html'] = hxs.select('//fieldset/div[@class="pt5"]/text()').extract()
         item['knowledge_points'] = ','.join(hxs.select('//fieldset/div[@class="pt3"]/a/text()').extract())  
         yield item
         
+def process_answer(answer_html, content_html):
+    hdoc = html.fromstring(content_html)
+    ma = hdoc.xpath('//label[@class=" s"]/text()')
+    if ma:
+        return ','.join([m[0] for m in ma])
+    ma = hdoc.xpath('//div[@class="sanwser"]/text()')
+    return ','.join([m for m in ma]) if ma else u''
 #    def parse_image(self, response):
 #        filename = get_path_from_url(response.url)
 #        folder = os.path.join('/mnt/images', filename[:2])

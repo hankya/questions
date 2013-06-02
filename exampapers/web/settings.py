@@ -15,7 +15,7 @@ DATABASES = {
         'NAME': 'cooco',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': 'root',
-        'PASSWORD': 'mnp@ssw0rd',
+        'PASSWORD': 'p@ssw0rd',
         'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '',                      # Set to empty string for default.
     }
@@ -71,7 +71,7 @@ ADMIN_MEDIA_PREFIX = '/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    '/mnt/images',
+    #'/mnt/images',
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -126,6 +126,7 @@ INSTALLED_APPS = (
     'questionmodels',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'django_evolution',
 )
 
 # A sample logging configuration. The only tangible logging

@@ -54,4 +54,7 @@ def enqueue_imgs(name, base_url, img_srcs):
     redis_cli = StrictRedis(host='localhost', port=6379, db=0)
     for url in set(img_srcs):
         redis_cli.sadd('%s_images' % name, urlparse.urljoin(base_url, url))
-    
+        
+import re
+def clean_tags(html, pa='<[^>]*>'):
+    return re.sub(pa, '', html)  

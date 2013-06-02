@@ -6,7 +6,7 @@ from scrapy.contrib.djangoitem import DjangoItem
 
 class QuestionModel(models.Model):
     
-    question_id = models.CharField(max_length=50, blank=True)
+    question_id = models.CharField(max_length=50, blank=True, unique=True)
     
     #image_urls = models.TextField()
     
@@ -18,6 +18,9 @@ class QuestionModel(models.Model):
     
     question_answer = models.TextField()
     question_answer_html = models.TextField()
+    
+    is_answer_unique = models.BooleanField(default=False)
+    unique_answer = models.CharField(max_length=50, blank=True)
     
     question_analysis = models.TextField()
     question_analysis_html = models.TextField()
