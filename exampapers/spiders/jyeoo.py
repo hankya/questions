@@ -95,7 +95,7 @@ class JyeooSpider(FSpider):
         else:
             item['question_type'], item['is_answer_unique'], item['question_answer'], item['unique_answer'] \
                 = extract_answer_info(item['question_type'], item['question_answer_html'], \
-                [u'.*',])
+                [u'<br>\u6545\u9009(\w)\uff0e?<!--E6-->',])
         #item['question_comment_html'] = hxs.select('//fieldset/div[@class="pt6"]').extract()
         item['question_analysis_html'] = hxs.select('//fieldset/div[@class="pt5"]/text()').extract()
         item['knowledge_points'] = ','.join(hxs.select('//fieldset/div[@class="pt3"]/a/text()').extract())  

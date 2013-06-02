@@ -37,4 +37,4 @@ def extract_answer(answer_html, p, answer_text):
         m = re.search(pa, answer_html)
         if m:
             return m.groups()[0]
-    return answer_text
+    return answer_text[:25]

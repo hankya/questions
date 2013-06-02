@@ -1,5 +1,7 @@
 #encoding:utf8
 import re
+from django.db import IntegrityError
+from scrapy import log
 
 class DjangoWriterPipeline(object):
     def process_item(self, item, spider):
@@ -12,7 +14,12 @@ class DjangoWriterPipeline(object):
         #item['grade'] = paper_grade_classifier(paper_name)
         #item['subject'] = paper_subject_classifier(paper_name)     
         item['paper_name'] = paper_name.replace(u' - \u83c1\u4f18\u7f51', '')
-        item.save()
+        try:
+            item.save()
+        except IntegrityError:
+            log.msg('trying to insert duplicate item %s' % item['question_id'], level=log.ERROR)
+            raise DropItem
+            
         return item
         
 question_types = {'选择':u'\u9009\u62e9\u9898','填空':u'\u586b\u7a7a\u9898','解答':u'\u89e3\u7b54\u9898'}

@@ -8,29 +8,44 @@ from redis import StrictRedis
 import os
 import cgi
 
-class Screenshot(QWebView):
+class Container(object):
     
     def __init__(self, spider_name):
+        self.spider_name = spider_name
+        self.container_path = 'screenshots/containers/%s' % self.spider_name
+        self.container = open('%s/%s.html' % (self.container_path, self.spider_name), 'rb').read().decode('utf8')
+        
+class Screenshot(QWebView):
+    
+    def __init__(self):
         self.app = QApplication(sys.argv)
         QWebView.__init__(self)
         self._loaded = False
         self.redis_cli = StrictRedis(host='localhost', port=6379, db=0)
         self.loadFinished.connect(self._loadFinished)
-        self.spider_name = spider_name
         self.replace_sign = 'replace_me'
-        self.container_path = 'screenshots/containers/%s' % self.spider_name
-        self.container = open('%s/%s.html' % (self.container_path, self.spider_name), 'rb').read().decode('utf8')
+        self.containers = {}
 
     def _create_script(self, html):
         return 'decoder=document.getElementById("decoder");decoder.innerHTML="%s";document.getElementById("screenshot_container").innerHTML=decoder.innerText;' % cgi.escape(html, quote=True)
     
     def start(self):
         while True:
-            req = self.redis_cli.brpop('%s_screenshot_requests' % self.spider_name, 0)
-            print req
-            self.process_request(req[1])      
+            keys = self.redis_cli.keys('*_screenshot_requests')                
+            for key in keys:
+                spider_name = key.split('_')[0]
+                if spider_name not in self.containers.keys():
+                    self.containers[spider_name] = Container(spider_name)     
+                req = self.redis_cli.rpop(key)
+                while req:
+                    self.process_request(req, spider_name)
+                    req = self.redis_cli.rpop(key)
+            print 'sleep for 10 seconds'
+            time.sleep(10)
+            
 
-    def process_request(self, request):
+    def process_request(self, request, spider_name):
+        container = self.containers[spider_name]
         request = eval(request)
         question_id = request[0]
         name = request[1]
@@ -41,8 +56,8 @@ class Screenshot(QWebView):
         if data:
             out_file = os.path.join(folder_path, '%s.png' % name)
             if not os.path.exists(out_file):
-                html = self.container.replace(self.replace_sign, data)
-                html_file = os.path.join(self.container_path, '%s.html' % name)
+                html = container.container.replace(self.replace_sign, data)
+                html_file = os.path.join(container.container_path, '%s.html' % name)
                 with open(html_file, 'wb') as f:
                     f.write(html.encode('utf8'))
                     f.flush()
@@ -104,7 +119,7 @@ def generate_path(question_id, name):
     
     
 def main():
-    serv = Screenshot(sys.argv[1])
+    serv = Screenshot()
     serv.start()
 
 if __name__=='__main__':
