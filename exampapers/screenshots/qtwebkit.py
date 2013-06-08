@@ -62,7 +62,7 @@ class Screenshot(QWebView):
                     f.write(html.encode('utf8'))
                     f.flush()
                 self.capture('file://%s' % os.path.abspath(html_file), out_file)
-                #os.unlink(html_file)
+                os.unlink(html_file)
 
     def capture(self, html_file, output_file):
         self.load(QUrl(html_file))

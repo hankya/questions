@@ -8,24 +8,6 @@ from redis import StrictRedis
 class EnhancedRetryMiddleware(RetryMiddleware):
 
     redis_cli = StrictRedis(host='localhost', port=6379, db=0)
-
-    def process_response(self, request, response, spider):
-        """
-            this middleware will log failure in download, and it retry the request if the content of the
-            respons is not valid by setting its status code to 500, its next slibing middleware will retry 
-            it when it see the status code 500
-        """
-        if 'dont_retry' in request.meta:
-            return response
-        if response.status in self.retry_http_codes or not spider.is_valid_response(response):
-            reason = response_status_message(response.status)
-            req = self._retry(request, reason, spider)
-            if req:
-                return req
-            else:
-                raise IgnoreRequest
-                
-        return response
         
     def _retry(self, request, reason, spider):
         retries = request.meta.get('retry_times', 0) + 1

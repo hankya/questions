@@ -23,7 +23,7 @@ def add_meta(request):
 class CoocoSpider(FSpider):
     name = 'cooco'
     allowed_domains = ['cooco.net.cn']
-    start_urls = ['http://gzwl.cooco.net.cn/', 'http://gzhx.cooco.net.cn/', 'http://gzsx.cooco.net.cn/', 'http://gzyw.cooco.net.cn/', 'http://gzls.cooco.net.cn/', 'http://gzsw.cooco.net.cn/', 'http://gzdl.cooco.net.cn/', 'http://gzzz.cooco.net.cn/', 'http://gzyy.cooco.net.cn/', 'http://czwl.cooco.net.cn/', 'http://czhx.cooco.net.cn/', 'http://czsx.cooco.net.cn/', 'http://czyw.cooco.net.cn/', 'http://czls.cooco.net.cn/', 'http://czsw.cooco.net.cn/', 'http://czdl.cooco.net.cn/', 'http://czzz.cooco.net.cn/', 'http://czyy.cooco.net.cn/']         
+    start_urls = ['http://gzwl.cooco.net.cn/user/newdown/100/', 'http://gzhx.cooco.net.cn/user/newdown/100/', 'http://gzsx.cooco.net.cn/user/newdown/100/', 'http://gzyw.cooco.net.cn/shijuan/100/', 'http://gzls.cooco.net.cn/shijuan/100/', 'http://gzsw.cooco.net.cn/shijuan/100/', 'http://gzdl.cooco.net.cn/shijuan/100/', 'http://gzzz.cooco.net.cn/shijuan/100/', 'http://gzyy.cooco.net.cn/shijuan/100/', 'http://czwl.cooco.net.cn/user/newdown/100/', 'http://czhx.cooco.net.cn/user/newdown/100/', 'http://czsx.cooco.net.cn/user/newdown/100/', 'http://czyw.cooco.net.cn/shijuan/100/', 'http://czls.cooco.net.cn/shijuan/100/', 'http://czsw.cooco.net.cn/shijuan/100/', 'http://czdl.cooco.net.cn/shijuan/100/', 'http://czzz.cooco.net.cn/shijuan/100/', 'http://czyy.cooco.net.cn/shijuan/100/']         
     
     rules = (
         Rule(SgmlLinkExtractor(allow=('http://\w+.cooco.net.cn/user/newdown/\d+/?$', 'http://\w+.cooco.net.cn/shijuan/\d+/?$', ),),),

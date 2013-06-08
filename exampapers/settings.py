@@ -7,8 +7,8 @@
 #
 
 USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:19.0) Gecko/20100101 Firefox/19.0'
-BOT_NAME = 'Baiduspider'
-DOWNLOAD_DELAY = '0.05'
+BOT_NAME = 'GoogleBot'
+DOWNLOAD_DELAY = '0.1'
 DOWNLOAD_TIMEOUT = 10
 SPIDER_MODULES = ['exampapers.spiders']
 NEWSPIDER_MODULE = 'exampapers.spiders'
@@ -33,18 +33,19 @@ DOWNLOADER_MIDDLEWARES = {
 #'exampapers.middlewares.RelativeToAbsMiddleware':1100,
 'exampapers.middlewares.retry.EnhancedRetryMiddleware':500,
 'exampapers.middlewares.httpproxy.HttpProxyMiddleware':750,
+'exampapers.middlewares.filter.ResponseFilterMiddleware':1000,
 'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware':None,
 'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware':None,
 }
 RETRY_ENABLED = True
-RETRY_TIMES = 2
-RETRY_HTTP_CODES = [400, 401, 403, 404, 408, 500, 503, 504]
+RETRY_TIMES = 25
+RETRY_HTTP_CODES = [400, 401, 403, 404, 408, 500, 502, 503, 504]
 RETRY_PRIORITY_ADJUST = 0
 
 #IMAGES_STORE='screenshots/containers'
 
 LOG_LEVEL='DEBUG'
-#LOG_FILE='logs/errors'
+#LOG_FILE='logs/2-jyeoo'
 
 #DUPEFILTER_CLASS = 'exampapers.dupefilter.RedisDupeFilter'
 
@@ -52,9 +53,9 @@ HTTPCACHE_ENABLED = True
 HTTPCACHE_EXPIRATION_SECS = 0
 HTTPCACHE_STORAGE = 'scrapy.contrib.downloadermiddleware.httpcache.FilesystemCacheStorage'
 HTTPCACHE_DIR = '/mnt/httpcache'
-HTTPCACHE_IGNORE_HTTP_CODES =[400, 401, 403, 404, 408, 500, 503, 504]
+HTTPCACHE_IGNORE_HTTP_CODES =[400, 401, 403, 404, 408, 500, 502, 503, 504]
 
-COOKIES_ENABLED = True
+#COOKIES_ENABLED = True
 #COOKIES_DEBUG = True
 
 

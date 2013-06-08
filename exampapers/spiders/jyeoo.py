@@ -22,7 +22,7 @@ def add_meta(request):
 class JyeooSpider(FSpider):
     name = 'jyeoo'
     allowed_domains = ['www.jyeoo.com','img.jyeoo.net']
-    start_urls = ['http://www.jyeoo.com/chemistry', 'http://www.jyeoo.com/bio', 'http://www.jyeoo.com/math', 'http://www.jyeoo.com/math2', 'http://www.jyeoo.com/math3', 'http://www.jyeoo.com/physics'] 
+    start_urls = ['http://www.jyeoo.com/chemistry/report', 'http://www.jyeoo.com/bio/report', 'http://www.jyeoo.com/math/report', 'http://www.jyeoo.com/math2/report', 'http://www.jyeoo.com/math3/report', 'http://www.jyeoo.com/physics/report'] 
     
     ban_codes = [403, 500, 503]
     captcha_symptom = 'x'
