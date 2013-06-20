@@ -61,5 +61,5 @@ HTTPCACHE_IGNORE_HTTP_CODES =[400, 401, 403, 404, 408, 500, 502, 503, 504]
 
 
 from django.core.management import setup_environ
-import web.settings
-setup_environ(web.settings)
+import djweb.settings
+setup_environ(djweb.settings)
