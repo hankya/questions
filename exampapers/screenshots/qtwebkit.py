@@ -97,9 +97,10 @@ class Screenshot(QWebView):
         frame.render(painter)
         painter.end()
         image.save(output_file)
-        if is_blank(output_file) or is_invalid(output_file, self.bad_screenshot):
+        if is_blank(output_file) or is_invalid(output_file, self.bad_screenshots):
             print 'failure when capturing %s' % output_file
             return False
+        print 'succeed on capturing %s' % output_file    
         return True
 
     def wait_load(self, delay=0):
