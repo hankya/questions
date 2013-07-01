@@ -102,7 +102,28 @@ class Screenshot(QWebView):
         '''generate path for url'''
         #key = url_fingerprint(url)
         return os.path.join('/mnt/screenshots', question_id[:2], question_id)
+
+#code to identify if a screenshot is valid or not
+def is_valid(file1, h2):
+    image1 = Image.open(file1)
+    h1 = image1.histogram()
+    rms = math.sqrt(reduce(operator.add,
+                           map(lambda a,b: (a-b)**2, h1, h2))/len(h1))
+    if rms == 0.0:
+        return False
+    return True
     
+def is_blank(img_path):
+    try:
+        img = Image.open(img_path)
+        extrema = img.convert('L').getextrema()
+    except IOError:
+        print 'error', img_path
+        return False
+    if sum(extrema) in (0, 510):
+        return True
+    return False
+
 #s.capture('http://sitescraper.net', 'website.png')
 #s.capture('http://sitescraper.net/blog', 'blog.png')
 from scrapy.utils.url import canonicalize_url     
