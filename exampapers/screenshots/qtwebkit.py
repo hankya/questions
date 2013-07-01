@@ -7,6 +7,7 @@ from redis import StrictRedis
 
 import os
 import cgi
+from PIL import Image
 
 class Container(object):
     
@@ -25,6 +26,7 @@ class Screenshot(QWebView):
         self.loadFinished.connect(self._loadFinished)
         self.replace_sign = 'replace_me'
         self.containers = {}
+        self.bad_screenshots = Image.open('/mnt/screenshot/bad/1.png').histogram()
 
     def _create_script(self, html):
         return 'decoder=document.getElementById("decoder");decoder.innerHTML="%s";document.getElementById("screenshot_container").innerHTML=decoder.innerText;' % cgi.escape(html, quote=True)
@@ -61,7 +63,16 @@ class Screenshot(QWebView):
                 with open(html_file, 'wb') as f:
                     f.write(html.encode('utf8'))
                     f.flush()
-                self.capture('file://%s' % os.path.abspath(html_file), out_file)
+                repeater = 5
+                while repeater > 0:
+                    repeater = repeater - 1
+                    result = self.capture('file://%s' % os.path.abspath(html_file), out_file)
+                    if result:
+                        break
+                #log this failure    
+                if repearter == 0:
+                    redis_cli.sadd('bad_screenshots', question_id)
+                    
                 os.unlink(html_file)
 
     def capture(self, html_file, output_file):
@@ -85,8 +96,11 @@ class Screenshot(QWebView):
         painter = QPainter(image)
         frame.render(painter)
         painter.end()
-        print 'saving', output_file
         image.save(output_file)
+        if is_blank(output_file) or is_invalid(output_file, self.bad_screenshot):
+            print 'failure when capturing %s' % output_file
+            return False
+        return True
 
     def wait_load(self, delay=0):
         # process app events until page loaded
@@ -104,14 +118,14 @@ class Screenshot(QWebView):
         return os.path.join('/mnt/screenshots', question_id[:2], question_id)
 
 #code to identify if a screenshot is valid or not
-def is_valid(file1, h2):
+def is_invalid(file1, h2):
     image1 = Image.open(file1)
     h1 = image1.histogram()
     rms = math.sqrt(reduce(operator.add,
                            map(lambda a,b: (a-b)**2, h1, h2))/len(h1))
     if rms == 0.0:
-        return False
-    return True
+        return True
+    return False
     
 def is_blank(img_path):
     try:
