@@ -1,12 +1,14 @@
 import sys
 import time
+import os
+import cgi
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtWebKit import *
+
 from redis import StrictRedis
 
-import os
-import cgi
 from PIL import Image
 
 class Container(object):
